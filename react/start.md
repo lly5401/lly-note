@@ -105,3 +105,29 @@ className={'nav-item', {active: type === item.type}}
 const inputRef = useRef(null);
 <input type="text"  ref={inputRef}>
  ```
+
+ ## uuid 可以使用 npm install uuid  时间格式处理我们可以使用 dayjs
+ ## ingput 获取焦点 useRef 获取dom dom.current.forcus
+ ## 组件通信
+ 通过props 传递参数：
+ ```
+ child:
+ function(props) {
+    props.name;
+    props.age;
+ }
+
+ father:
+ <div name = {test} 
+    age = {18}
+    isTrue={false}
+    list={['vue','react']}
+    abj={{name:'test'}}
+    cd={()=>console.log(111)}
+    child={<span> this is span</span>}
+ > </div>
+ ```
+ 
+ props 是只读对象  
+ 子组件只能读取props中的数据，不能直接进行修改，父组件的数据只能由父组件修改。
+ 
