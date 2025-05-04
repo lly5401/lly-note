@@ -1,5 +1,10 @@
 ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 
+
+本地链接不上 github 可能是因为 代理端口和配置的git 代理不一致导致的。
+git config --global -l 查看
+https://blog.csdn.net/qq_40296909/article/details/134285451
+
 vpn ：https://teddysun.com/342.html
 OpenVZ平台Google BBR一键安装脚本 加速 https://www.moerats.com/archives/111/
 
