@@ -1,0 +1,129 @@
+package com.example;
+
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+public class HttpRequestTest {
+
+    private static final String API_URL = "http://localhost:5000/api/dishes?page=";
+    private static HttpClient client = HttpClient.newHttpClient();
+    public static void main(String[] args) {
+        PageData pageData = getData(1);
+        List<DataItem> all = new ArrayList<>();
+        all.addAll(pageData.getData());
+        for (int i = 2; i <= pageData.getTotal() ; i++) {
+            PageData pp = getData(i);
+            all.addAll(pp.getData());
+        }
+        Double result =  all.stream()
+                .mapToDouble(item -> calFormula(item.getPrice(), item.getCost()))
+                .max()
+                .orElse(Double.NaN);
+
+        DataItem max = all.stream()
+                .max(Comparator.comparing(dataItem -> calFormula(dataItem.getPrice(), dataItem.getCost())))
+                .orElse(null);
+
+        System.out.println(all.size());
+        System.out.println(result);
+        System.out.println(max.getId());
+    }
+
+    private static double calFormula(int x, int y) {
+        return (Math.pow(x, 2) + Math.pow(y, 3)) / 2;
+    }
+    private static PageData getData(int page) {
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(API_URL+page)).GET().build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return praseData(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static PageData praseData(String data) {
+
+        Gson gson = new Gson();
+        PageData pageData = gson.fromJson(data, PageData.class);
+        return  pageData;
+    }
+}
+
+class PageData {
+    int page;
+    @SerializedName("total_pages")
+    int total;
+    List<DataItem> data = new ArrayList<>();
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+    public List<DataItem> getData() {
+        return data;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+}
+
+class DataItem {
+   int id;
+   String name;
+   int price;
+   int quantity;
+   int cost;
+
+   public int getId() {
+       return id;
+   }
+   public void setId(int id) {
+       this.id = id;
+   }
+
+   public String getName() {
+       return name;
+   }
+
+   public void setName(String name) {
+       this.name = name;
+   }
+
+   public int getPrice() {
+       return price;
+   }
+   public void setPrice(int price) {
+       this.price = price;
+   }
+
+   public int getQuantity() {
+       return quantity;
+   }
+
+   public void setQuantity(int quantity) {
+       this.quantity = quantity;
+   }
+
+   public int getCost() {
+       return cost;
+   }
+   public void setCost(int cost) {
+       this.cost = cost;
+   }
+}
